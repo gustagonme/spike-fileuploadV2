@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MessageService } from 'primeng/api';
 
@@ -16,7 +17,7 @@ export class HomeComponent {
   maxSize:number = 100000000;
   uploadedFiles: any[] = [];
 
-    constructor(private messageService: MessageService) {}
+    constructor(private messageService: MessageService, private http: HttpClient) {}
 
     onUpload(event:UploadEvent) {
         for(let file of event.files) {
@@ -24,11 +25,23 @@ export class HomeComponent {
           }
           
           this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
-          console.log("🚀 ~ file: home.component.ts:24 ~ HomeComponent ~ onUpload ~ this.uploadedFiles:", this.uploadedFiles)
     }
 
     upload(event:any){
-      console.log(event.files);
+     const files:any = event.files;
+     const path:string = "http://localhost:8080/api/upload";
+      const formData: FormData = new FormData();
+      formData.append("file", files[0])
+    // for (let i = 0; i < files.length; i++) {
+    //   formData.append(i.toString(), files[i], files[i].name);
+    // }
+
+    this.http.post(path, formData).subscribe(
+      (data =>{
+        console.log(data);
+        
+      })
+    )
       
     }
 
